@@ -48,6 +48,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	processedImage := processing.BasicScaling(imageFile)
+
 	tempResponseFile, _ := ioutil.TempFile("_generated", "processed-*.png")
 	png.Encode(tempResponseFile, processedImage)
 
