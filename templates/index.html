@@ -11,6 +11,13 @@
   <body>
 	<section class="section">
 		<h1 class="title">Pixel-Art-Scaler</h1>
+
+		{{if ne .ErrorMessage ""}}
+		<div class="notification is-danger is-light">
+			{{.ErrorMessage}}
+		</div>
+		{{end}}
+
 		<form enctype="multipart/form-data" action="/upload" method="post" >
 			<div class="field">
 				<div class="file">
@@ -29,11 +36,11 @@
 			</div>
 			<div class="field">
 				<div class="select">
-					<select>
-						<option disabled selected>Select Method…</option>
-						<option>Interpolate 2x</option>
-						<option>Interpolate 3x</option>
-						<option>Interpolate 4x</option>
+					<select name="scalingmethod">
+						<option value="" disabled selected>Select Method…</option>
+						<option value="2x">Interpolate 2x</option>
+						<option value="3x">Interpolate 3x</option>
+						<option value="4x">Interpolate 4x</option>
 					</select>
 				</div>
 			</div>
