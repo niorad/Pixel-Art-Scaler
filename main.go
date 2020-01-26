@@ -87,6 +87,10 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 
 func setupRoutes() {
 	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	fmt.Println("http://localhost:" + port)
 	http.HandleFunc("/upload", uploadFile)
 	http.HandleFunc("/", getIndex)
 	http.ListenAndServe(":"+port, nil)
