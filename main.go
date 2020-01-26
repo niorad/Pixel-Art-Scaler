@@ -6,7 +6,9 @@ import (
 	"image/png"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"pixelartscaler/processing"
+	"strconv"
 )
 
 var templates = template.Must(template.ParseFiles("./templates/index.html"))
@@ -23,17 +25,12 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	defer file.Close()
+
 	fmt.Printf("Uploaded File: %+v\n", handler.Filename)
 	fmt.Printf("File Size: %+v\n", handler.Size)
 	fmt.Printf("MIME Header: %+v\n", handler.Header)
 
-	scalingMethod := r.FormValue("scalingmethod")
-	if scalingMethod == "" {
-		form := page{ErrorMessage: "Pleeeease select a scaling-method!"}
-		templates.ExecuteTemplate(w, "index.html", form)
-		return
-	}
+	scalingIterationCount, _ := strconv.Atoi(r.FormValue("scalingIterationCount"))
 
 	if handler.Header.Get("Content-Type") != "image/png" {
 		form := page{ErrorMessage: "This is not a PNG file how am I.. what..."}
@@ -41,12 +38,17 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tempFile, err := ioutil.TempFile("_generated", "upload-*.png")
+	tempDir, err := ioutil.TempDir(".", "_gen")
+	if err != nil {
+		fmt.Println("Error creating temp-dir")
+		fmt.Println(err)
+	}
+
+	tempFile, err := ioutil.TempFile(tempDir, "upload-*.png")
 	if err != nil {
 		fmt.Println("Error Creating Temp File for Upload")
 		fmt.Println(err)
 	}
-	defer tempFile.Close()
 
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
@@ -69,11 +71,18 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 
 	processedImage := processing.BasicScaling(imageFile)
 
-	tempResponseFile, _ := ioutil.TempFile("_generated", "processed-*.png")
+	for i := 1; i < scalingIterationCount; i++ {
+		processedImage = processing.BasicScaling(processedImage)
+	}
+
+	tempResponseFile, _ := ioutil.TempFile(tempDir, "processed-*.png")
 	png.Encode(tempResponseFile, processedImage)
 
 	http.ServeFile(w, r, tempResponseFile.Name())
 
+	file.Close()
+	tempFile.Close()
+	os.RemoveAll(tempDir)
 }
 
 func setupRoutes() {
