@@ -38,6 +38,12 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if handler.Size > 500000 {
+		form := page{ErrorMessage: "Too big a file pal. Keep them below 500 kb."}
+		templates.ExecuteTemplate(w, "index.html", form)
+		return
+	}
+
 	tempDir, err := ioutil.TempDir(".", "_gen")
 	if err != nil {
 		fmt.Println("Error creating temp-dir")
