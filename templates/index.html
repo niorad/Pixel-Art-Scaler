@@ -30,10 +30,23 @@
 			</div>
 			<div class="field">
 				<div class="select">
+					<select name="scalingType">
+						<option value="basic">Basic Interpolation</option>
+						<option value="randombasic">Basic Interpolation Randomized</option>
+						<option value="randombasicanim">Randomized & Animated</option>
+						<option value="nn" selected>Nearest Neighbor</option>
+						<option value="null">Pass-thru (no effect)</option>
+					</select>
+				</div>
+			</div>
+			<div class="field">
+				<div class="select">
 					<select name="scalingIterationCount">
 						<option value="1" selected>Apply once</option>
-						<option value="2">Apply twice</option>
-						<option value="3">Apply thrice</option>
+						<option value="2">Apply 2x</option>
+						<option value="3">Apply 3x</option>
+						<option value="4">Apply 4x</option>
+						<option value="5">Apply 5x</option>
 					</select>
 				</div>
 			</div>

@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"image/gif"
 	"image/png"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"pixelartscaler/giffactory"
 	"pixelartscaler/processing"
 	"strconv"
 )
@@ -31,6 +33,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("MIME Header: %+v\n", handler.Header)
 
 	scalingIterationCount, _ := strconv.Atoi(r.FormValue("scalingIterationCount"))
+	scalingType := r.FormValue("scalingType")
 
 	if handler.Header.Get("Content-Type") != "image/png" {
 		form := page{ErrorMessage: "This is not a PNG file how am I.. what..."}
@@ -75,15 +78,44 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	processedImage := processing.BasicScaling(imageFile)
+	processedImage := imageFile
+	var processedGif gif.GIF
 
-	for i := 1; i < scalingIterationCount; i++ {
-		processedImage = processing.BasicScaling(processedImage)
+	if scalingType == "basic" {
+
+		for i := 0; i < scalingIterationCount; i++ {
+			processedImage = processing.BasicScaling(processedImage, false)
+		}
+
+	} else if scalingType == "randombasic" {
+
+		for i := 0; i < scalingIterationCount; i++ {
+			processedImage = processing.BasicScaling(processedImage, true)
+		}
+
+	} else if scalingType == "randombasicanim" {
+
+		processedGif = giffactory.Generate(processedImage)
+
+	} else if scalingType == "nn" {
+
+		for i := 0; i < scalingIterationCount; i++ {
+			processedImage = processing.NearestNeighbor(processedImage)
+		}
 	}
 
-	tempResponseFile, _ := ioutil.TempFile(tempDir, "processed-*.png")
-	png.Encode(tempResponseFile, processedImage)
+	var filenamePattern = "processed-*.png"
+	if scalingType == "randombasicanim" {
+		filenamePattern = "processed-*.gif"
+	}
 
+	tempResponseFile, _ := ioutil.TempFile(tempDir, filenamePattern)
+
+	if scalingType == "randombasicanim" {
+		gif.EncodeAll(tempResponseFile, &processedGif)
+	} else {
+		png.Encode(tempResponseFile, processedImage)
+	}
 	http.ServeFile(w, r, tempResponseFile.Name())
 
 	file.Close()
