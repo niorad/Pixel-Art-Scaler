@@ -33,6 +33,8 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("MIME Header: %+v\n", handler.Header)
 
 	scalingIterationCount, _ := strconv.Atoi(r.FormValue("scalingIterationCount"))
+	frameDelay, _ := strconv.Atoi(r.FormValue("frameDelay"))
+	frameCount, _ := strconv.Atoi(r.FormValue("frameCount"))
 	scalingType := r.FormValue("scalingType")
 
 	if handler.Header.Get("Content-Type") != "image/png" {
@@ -95,7 +97,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 
 	} else if scalingType == "randombasicanim" {
 
-		processedGif = giffactory.Generate(processedImage)
+		processedGif = giffactory.Generate(processedImage, scalingIterationCount, frameDelay, frameCount)
 
 	} else if scalingType == "nn" {
 

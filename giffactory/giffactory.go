@@ -9,26 +9,29 @@ import (
 )
 
 // Generate creates an animated GIF out of multiple images
-func Generate(srcImg image.Image) gif.GIF {
+func Generate(srcImg image.Image, scalingIterationCount int, frameDelay int, frameCount int) gif.GIF {
 
 	var frames []*image.Paletted
 	anim := gif.GIF{}
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < frameCount; i++ {
 
-		processedImage := processing.BasicScaling(srcImg, true)
-		processedImage = processing.BasicScaling(processedImage, true)
-		processedImage = processing.BasicScaling(processedImage, true)
+		processedImage := srcImg
+
+		for j := 0; j < scalingIterationCount; j++ {
+			processedImage = processing.BasicScaling(processedImage, true)
+		}
 
 		mygif := image.NewPaletted(processedImage.Bounds().Bounds(), palette.WebSafe)
 		draw.FloydSteinberg.Draw(mygif, processedImage.Bounds().Bounds(), processedImage, image.ZP)
 
 		frames = append(frames, mygif)
-		anim.Delay = append(anim.Delay, 10)
+		anim.Delay = append(anim.Delay, frameDelay)
 	}
 
 	anim.Image = frames
 	anim.LoopCount = 0
+
 	return anim
 
 }

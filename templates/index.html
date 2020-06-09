@@ -14,7 +14,7 @@
 	 </style>
   </head>
   <body>
-	<section class="section">
+	<section class="section" style="max-width: 500px;">
 		<h1 class="title">Pixel-Art-Scaler</h1>
 
 		{{if ne .ErrorMessage ""}}
@@ -29,25 +29,54 @@
 				<input type="file" name="myFile" required />
 			</div>
 			<div class="field">
+				<label class="label">Type of scaling</label>
 				<div class="select">
 					<select name="scalingType">
 						<option value="basic">Basic Interpolation</option>
 						<option value="randombasic">Basic Interpolation Randomized</option>
-						<option value="randombasicanim">Randomized & Animated</option>
-						<option value="nn" selected>Nearest Neighbor</option>
+						<option selected value="randombasicanim">Randomized & Animated</option>
+						<option value="nn">Nearest Neighbor</option>
 						<option value="null">Pass-thru (no effect)</option>
 					</select>
 				</div>
 			</div>
 			<div class="field">
-				<div class="select">
-					<select name="scalingIterationCount">
-						<option value="1" selected>Apply once</option>
-						<option value="2">Apply 2x</option>
-						<option value="3">Apply 3x</option>
-						<option value="4">Apply 4x</option>
-						<option value="5">Apply 5x</option>
-					</select>
+				<label class="label">Iterations 1-10</label>
+				<div class="control">
+					<input
+						class="input"
+						min="1"
+						max="10"
+						placeholder="Iterations"
+						value="1"
+						type="number"
+						name="scalingIterationCount">
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">Delay between frames (for animations)</label>
+				<div class="control">
+					<input
+						class="input"
+						min="1"
+						max="1000"
+						placeholder="Delay"
+						value="10"
+						type="number"
+						name="frameDelay">
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">Frame Count (for animations)</label>
+				<div class="control">
+					<input
+						class="input"
+						min="1"
+						max="30"
+						placeholder="Frame Count"
+						value="5"
+						type="number"
+						name="frameCount">
 				</div>
 			</div>
 			<div class="field">
