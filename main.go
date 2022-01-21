@@ -104,6 +104,14 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		for i := 0; i < scalingIterationCount; i++ {
 			processedImage = processing.NearestNeighbor(processedImage)
 		}
+
+	} else if scalingType == "nnthenbasic" {
+
+		processedImage = processing.NearestNeighbor(processedImage)
+
+		for i := 0; i < scalingIterationCount; i++ {
+			processedImage = processing.BasicScaling(processedImage, false)
+		}
 	}
 
 	var filenamePattern = "processed-*.png"

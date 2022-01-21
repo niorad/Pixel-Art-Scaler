@@ -5,7 +5,7 @@ import (
 	"math/rand"
 )
 
-// BasicScaling Applies basic interpolation to an image.
+// BasicScaling Applies basic EPX interpolation to an image.
 // It's doubling the image-size in each dimension
 // Can be randomized, where interpolation has a chance of not happening
 func BasicScaling(srcImg image.Image, randomized bool) image.Image {
@@ -63,29 +63,25 @@ func BasicScaling(srcImg image.Image, randomized bool) image.Image {
 				}
 			}
 
+			// with randomized, there's a chance that an interpolation won't happen
+			// used in animations for a jaggy look
 			if randomized {
 				if rand.Intn(10) > 2 {
-
 					newImg.Set(cursorX+1, cursorY+1, newBottomRightColor)
 					newImg.Set(cursorX, cursorY+1, newBottomLeftColor)
 					newImg.Set(cursorX+1, cursorY, newTopRightColor)
 					newImg.Set(cursorX, cursorY, newTopLeftColor)
-
 				} else {
-
 					newImg.Set(cursorX+1, cursorY+1, srcColor)
 					newImg.Set(cursorX, cursorY+1, srcColor)
 					newImg.Set(cursorX+1, cursorY, srcColor)
 					newImg.Set(cursorX, cursorY, srcColor)
 				}
-
 			} else {
-
 				newImg.Set(cursorX+1, cursorY+1, newBottomRightColor)
 				newImg.Set(cursorX, cursorY+1, newBottomLeftColor)
 				newImg.Set(cursorX+1, cursorY, newTopRightColor)
 				newImg.Set(cursorX, cursorY, newTopLeftColor)
-
 			}
 		}
 	}
@@ -113,7 +109,6 @@ func NearestNeighbor(srcImg image.Image) image.Image {
 			newImg.Set(cursorX, cursorY+1, srcColor)
 			newImg.Set(cursorX+1, cursorY, srcColor)
 			newImg.Set(cursorX, cursorY, srcColor)
-
 		}
 	}
 
